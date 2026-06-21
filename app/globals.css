@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --blue-primary: #1d4ed8;
+  --blue-dark: #1e3a8a;
+  --blue-light: #dbeafe;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #f0f4ff;
+}
+
+.sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-all duration-200 text-sm font-medium;
+}
+
+.sidebar-link.active {
+  @apply bg-blue-700 text-white;
+}
+
+.card {
+  @apply bg-white rounded-2xl shadow-sm border border-blue-50 p-6;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium;
+}
+
+.btn-secondary {
+  @apply border border-blue-200 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium;
+}
+
+.input {
+  @apply w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.badge-present {
+  @apply bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium;
+}
+
+.badge-absent {
+  @apply bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium;
+}
+
+.badge-late {
+  @apply bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium;
+}
+
+.table-head {
+  @apply bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider;
+}
+
+.stat-card {
+  @apply bg-white rounded-2xl p-5 border border-blue-50 shadow-sm;
 }
