@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  email              String        @unique
+  password           String
+  name               String
+  role               String
+  registrationNumber String?
+  facultyId          String?       @db.ObjectId
+  assignedCourses    String[]
+  refreshToken       String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  faculty     Faculty?     @relation(fields: [facultyId], references: [id])
+  attendance  Attendance[]
+  feedbacks   Feedback[]
+  recordedBy  Attendance[] @relation("RecordedBy")
+}
+
+model Faculty {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courses  Course[]
+  students User[]
+}
+
+model Semester {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  academicYear String
+  startDate    String?
+  endDate      String?
+  status       String   @default("Upcoming")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  courses    Course[]
+  attendance Attendance[]
+}
+
+model Course {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  code        String   @unique
+  credits     Int
+  facultyId   String   @db.ObjectId
+  semesterId  String   @db.ObjectId
+  lecturerIds String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  faculty    Faculty     @relation(fields: [facultyId], references: [id])
+  semester   Semester    @relation(fields: [semesterId], references: [id])
+  attendance Attendance[]
+  feedbacks  Feedback[]
+}
+
+model Attendance {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId    String   @db.ObjectId
+  courseId     String   @db.ObjectId
+  date         String
+  status       String
+  recordedById String   @db.ObjectId
+  semesterId   String   @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student   User     @relation(fields: [studentId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  recordedBy User    @relation("RecordedBy", fields: [recordedById], references: [id])
+  semester  Semester @relation(fields: [semesterId], references: [id])
+}
+
+model Feedback {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId String   @db.ObjectId
+  courseId  String   @db.ObjectId
+  category  String
+  message   String
+  status    String   @default("Submitted")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student User   @relation(fields: [studentId], references: [id])
+  course  Course @relation(fields: [courseId], references: [id])
+}

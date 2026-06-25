@@ -1,28 +1,55 @@
 import Header from "../components/Header";
 import Link from "next/link";
+import { getAuthUser } from "../lib/auth";
+import { prisma } from "../lib/prisma";
 
-const courses = [
-  { code: "CS301", name: "Data Structures & Algorithms", attended: 19, total: 20, percentage: 95 },
-  { code: "CS201", name: "Database Management Systems", attended: 15, total: 18, percentage: 83 },
-  { code: "CS401", name: "Software Engineering", attended: 12, total: 16, percentage: 75 },
-  { code: "CS101", name: "Introduction to Programming", attended: 14, total: 14, percentage: 100 },
-];
+export default async function StudentDashboard() {
+  const user = await getAuthUser();
 
-const overallAttendance = Math.round(courses.reduce((a, c) => a + c.percentage, 0) / courses.length);
+  if (!user || user.role !== "student") {
+    return <div className="flex flex-col h-full"><Header title="Student Dashboard" /><main className="flex-1 p-8"><p>Unauthorized</p></main></div>;
+  }
 
-export default function StudentDashboard() {
+  const courses = await prisma.course.findMany({
+    where: { facultyId: user.facultyId || undefined },
+    select: { id: true, name: true, code: true },
+  });
+
+  const courseIds = courses.map((c) => c.id);
+
+  const attendanceRecords = await prisma.attendance.findMany({
+    where: { studentId: user.id, courseId: { in: courseIds } },
+    select: { courseId: true, status: true },
+  });
+
+  const courseAttendance = courses.map((c) => {
+    const records = attendanceRecords.filter((a) => a.courseId === c.id);
+    const total = records.length;
+    const attended = records.filter((r) => r.status !== "absent").length;
+    const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
+    return { code: c.code, name: c.name, attended, total, percentage };
+  });
+
+  const totalAttended = courseAttendance.reduce((a, c) => a + c.attended, 0);
+  const totalClasses = courseAttendance.reduce((a, c) => a + c.total, 0);
+  const missed = totalClasses - totalAttended;
+  const overallPercentage = courseAttendance.length > 0
+    ? Math.round(courseAttendance.reduce((a, c) => a + c.percentage, 0) / courseAttendance.length)
+    : 0;
+
+  const stats = [
+    { label: "Overall Attendance", value: `${overallPercentage}%`, icon: "📊", color: "bg-blue-600" },
+    { label: "Courses Enrolled", value: String(courses.length), icon: "📚", color: "bg-indigo-600" },
+    { label: "Classes Attended", value: String(totalAttended), icon: "✅", color: "bg-blue-500" },
+    { label: "Classes Missed", value: String(missed), icon: "❌", color: "bg-blue-700" },
+  ];
+
   return (
     <div className="flex flex-col h-full">
-      <Header title="Student Dashboard" subtitle="STU2024001 · Faculty of Science & Technology" />
+      <Header title="Student Dashboard" subtitle="Your attendance overview" />
       <main className="flex-1 p-8 overflow-y-auto">
-        {/* Overall stat */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          {[
-            { label: "Overall Attendance", value: `${overallAttendance}%`, icon: "📊", color: "bg-blue-600" },
-            { label: "Courses Enrolled", value: courses.length.toString(), icon: "📚", color: "bg-indigo-600" },
-            { label: "Classes Attended", value: courses.reduce((a, c) => a + c.attended, 0).toString(), icon: "✅", color: "bg-blue-500" },
-            { label: "Classes Missed", value: courses.reduce((a, c) => a + (c.total - c.attended), 0).toString(), icon: "❌", color: "bg-blue-700" },
-          ].map(s => (
+          {stats.map((s) => (
             <div key={s.label} className="stat-card flex items-center gap-4">
               <div className={`w-12 h-12 ${s.color} rounded-xl flex items-center justify-center text-2xl flex-shrink-0`}>{s.icon}</div>
               <div>
@@ -32,16 +59,14 @@ export default function StudentDashboard() {
             </div>
           ))}
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Course breakdown */}
           <div className="lg:col-span-2 card">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-bold text-blue-900">Attendance by Course</h2>
               <Link href="/student/attendance" className="text-xs text-blue-600 hover:underline font-medium">View Details →</Link>
             </div>
             <div className="space-y-4">
-              {courses.map(c => (
+              {courseAttendance.map((c) => (
                 <div key={c.code}>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
@@ -50,27 +75,21 @@ export default function StudentDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500">{c.attended}/{c.total}</span>
-                      <span className={`text-sm font-bold ${c.percentage >= 85 ? "text-green-600" : c.percentage >= 70 ? "text-yellow-600" : "text-red-600"}`}>
-                        {c.percentage}%
-                      </span>
+                      <span className={`text-sm font-bold ${c.percentage >= 85 ? "text-green-600" : c.percentage >= 70 ? "text-yellow-600" : "text-red-600"}`}>{c.percentage}%</span>
                     </div>
                   </div>
                   <div className="h-2 bg-blue-50 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${c.percentage >= 85 ? "bg-green-500" : c.percentage >= 70 ? "bg-yellow-500" : "bg-red-500"}`}
-                      style={{ width: `${c.percentage}%` }}
-                    ></div>
+                    <div className={`h-full rounded-full ${c.percentage >= 85 ? "bg-green-500" : c.percentage >= 70 ? "bg-yellow-500" : "bg-red-500"}`} style={{ width: `${c.percentage}%` }}></div>
                   </div>
                 </div>
               ))}
+              {courseAttendance.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No attendance data yet</p>}
             </div>
           </div>
-
-          {/* Alerts & Actions */}
           <div className="space-y-5">
             <div className="card">
               <h2 className="text-base font-bold text-blue-900 mb-3">Status Alerts</h2>
-              {courses.filter(c => c.percentage < 85).map(c => (
+              {courseAttendance.filter((c) => c.percentage < 85).map((c) => (
                 <div key={c.code} className={`flex items-start gap-3 p-3 rounded-lg mb-2 ${c.percentage < 75 ? "bg-red-50 border border-red-100" : "bg-yellow-50 border border-yellow-100"}`}>
                   <span className="text-lg flex-shrink-0">{c.percentage < 75 ? "🚨" : "⚠️"}</span>
                   <div>
@@ -79,20 +98,15 @@ export default function StudentDashboard() {
                   </div>
                 </div>
               ))}
-              {courses.every(c => c.percentage >= 85) && (
+              {courseAttendance.every((c) => c.percentage >= 85) && courseAttendance.length > 0 && (
                 <p className="text-xs text-green-600 font-medium">✅ All courses are in good standing!</p>
               )}
             </div>
-
             <div className="card">
               <h2 className="text-base font-bold text-blue-900 mb-3">Quick Links</h2>
               <div className="space-y-2">
-                <Link href="/student/attendance" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">
-                  📋 View Full Attendance
-                </Link>
-                <Link href="/student/feedback" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">
-                  💬 Submit Feedback
-                </Link>
+                <Link href="/student/attendance" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">📋 View Full Attendance</Link>
+                <Link href="/student/feedback" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">💬 Submit Feedback</Link>
               </div>
             </div>
           </div>

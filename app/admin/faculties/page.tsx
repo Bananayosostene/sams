@@ -1,27 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
+import { api } from "../../lib/api";
 
-const initialFaculties = [
-  { id: 1, name: "Faculty of Science & Technology", code: "FST", courses: 12, students: 340 },
-  { id: 2, name: "Faculty of Business Administration", code: "FBA", courses: 10, students: 290 },
-  { id: 3, name: "Faculty of Engineering", code: "FEG", courses: 15, students: 410 },
-  { id: 4, name: "Faculty of Arts & Humanities", code: "FAH", courses: 8, students: 200 },
-];
+interface Faculty {
+  id: string;
+  name: string;
+  code: string;
+  _count: { courses: number; students: number };
+}
 
 export default function FacultiesPage() {
-  const [faculties, setFaculties] = useState(initialFaculties);
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ name: "", code: "" });
+  const [editing, setEditing] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    api.get<Faculty[]>("/api/faculties").then((res) => { setFaculties(res.data); setLoading(false); });
+  }, []);
+
+  const handleAdd = async () => {
     if (!form.name || !form.code) return;
-    setFaculties([...faculties, { id: Date.now(), name: form.name, code: form.code.toUpperCase(), courses: 0, students: 0 }]);
+    if (editing) {
+      const res = await api.put<Faculty>(`/api/faculties/${editing}`, form);
+      setFaculties(faculties.map((f) => (f.id === editing ? res.data : f)));
+    } else {
+      const res = await api.post<Faculty>("/api/faculties", form);
+      setFaculties([res.data, ...faculties]);
+    }
     setForm({ name: "", code: "" });
+    setEditing(null);
     setShowModal(false);
   };
 
-  const handleDelete = (id: number) => setFaculties(faculties.filter((f) => f.id !== id));
+  const handleEdit = (f: Faculty) => {
+    setForm({ name: f.name, code: f.code });
+    setEditing(f.id);
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    await api.delete(`/api/faculties/${id}`);
+    setFaculties(faculties.filter((f) => f.id !== id));
+  };
+
+  if (loading) return <div className="flex flex-col h-full"><Header title="Faculties" subtitle="Manage academic faculties" /><main className="flex-1 p-8"><p>Loading...</p></main></div>;
 
   return (
     <div className="flex flex-col h-full">
@@ -29,12 +54,9 @@ export default function FacultiesPage() {
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-sm text-gray-500">{faculties.length} faculties registered</p>
-            </div>
-            <button onClick={() => setShowModal(true)} className="btn-primary">+ Add Faculty</button>
+            <p className="text-sm text-gray-500">{faculties.length} faculties registered</p>
+            <button onClick={() => { setForm({ name: "", code: "" }); setEditing(null); setShowModal(true); }} className="btn-primary">+ Add Faculty</button>
           </div>
-
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -50,13 +72,11 @@ export default function FacultiesPage() {
                 {faculties.map((f) => (
                   <tr key={f.id} className="hover:bg-blue-50/40 transition-colors">
                     <td className="px-4 py-3.5 text-sm font-medium text-gray-800">{f.name}</td>
-                    <td className="px-4 py-3.5">
-                      <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md">{f.code}</span>
-                    </td>
-                    <td className="px-4 py-3.5 text-sm text-gray-600">{f.courses}</td>
-                    <td className="px-4 py-3.5 text-sm text-gray-600">{f.students}</td>
+                    <td className="px-4 py-3.5"><span className="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md">{f.code}</span></td>
+                    <td className="px-4 py-3.5 text-sm text-gray-600">{f._count?.courses ?? 0}</td>
+                    <td className="px-4 py-3.5 text-sm text-gray-600">{f._count?.students ?? 0}</td>
                     <td className="px-4 py-3.5 flex gap-2">
-                      <button className="btn-secondary text-xs py-1">Edit</button>
+                      <button onClick={() => handleEdit(f)} className="btn-secondary text-xs py-1">Edit</button>
                       <button onClick={() => handleDelete(f.id)} className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Delete</button>
                     </td>
                   </tr>
@@ -66,12 +86,10 @@ export default function FacultiesPage() {
           </div>
         </div>
       </main>
-
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold text-blue-900 mb-5">Add New Faculty</h3>
+            <h3 className="text-lg font-bold text-blue-900 mb-5">{editing ? "Edit Faculty" : "Add New Faculty"}</h3>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Faculty Name</label>
@@ -83,7 +101,7 @@ export default function FacultiesPage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={handleAdd} className="btn-primary flex-1">Add Faculty</button>
+              <button onClick={handleAdd} className="btn-primary flex-1">{editing ? "Update Faculty" : "Add Faculty"}</button>
               <button onClick={() => setShowModal(false)} className="btn-secondary flex-1">Cancel</button>
             </div>
           </div>
