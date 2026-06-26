@@ -19,6 +19,9 @@ export default function LoginPage() {
     <main className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white text-sm font-medium mb-6 transition-colors">
+            ← Back to Home
+          </Link>
           <Link href="/">
             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-800 font-black text-2xl mx-auto mb-4 shadow-2xl cursor-pointer">
               S
