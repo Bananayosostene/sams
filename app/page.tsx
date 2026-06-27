@@ -57,7 +57,16 @@ export default function Home() {
           </Link>
         </div>
 
-        <p className="text-center text-blue-400 text-xs mt-10">© 2025 SAMS · Student Attendance Management System</p>
+        <div className="flex justify-center gap-4 mt-10">
+          <Link href="/login" className="bg-white text-blue-800 font-bold px-8 py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
+            Sign In
+          </Link>
+          <Link href="/signup" className="bg-blue-500 text-white font-bold px-8 py-3 rounded-xl hover:bg-blue-400 transition-colors shadow-lg border border-white/20">
+            Sign Up
+          </Link>
+        </div>
+
+        <p className="text-center text-blue-400 text-xs mt-6">© 2025 SAMS · Student Attendance Management System</p>
       </div>
     </main>
   );
