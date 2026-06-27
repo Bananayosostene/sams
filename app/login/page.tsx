@@ -1,97 +1,69 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { login } from "../lib/api";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const [role, setRole] = useState("student");
-  const [form, setForm] = useState({ email: "", password: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (role === "admin") router.push("/admin");
-    else if (role === "lecturer") router.push("/lecturer");
-    else router.push("/student");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await login(email, password);
+      const role = res.data.user.role;
+      if (role === "admin") router.push("/admin");
+      else if (role === "lecturer") router.push("/lecturer");
+      else router.push("/student");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white text-sm font-medium mb-6 transition-colors">
-            ← Back to Home
-          </Link>
-          <Link href="/">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-800 font-black text-2xl mx-auto mb-4 shadow-2xl cursor-pointer">
-              S
-            </div>
-          </Link>
-          <h1 className="text-3xl font-black text-white">Welcome Back</h1>
-          <p className="text-blue-200 text-sm mt-1">Sign in to your SAMS account</p>
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-800 font-black text-2xl mx-auto mb-4 shadow-2xl">S</div>
+          <h1 className="text-3xl font-black text-white">SAMS</h1>
+          <p className="text-blue-200 text-sm">Student Attendance Management System</p>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <div className="flex rounded-xl border border-blue-100 overflow-hidden mb-6">
-            {["student", "lecturer", "admin"].map((r) => (
-              <button
-                key={r}
-                onClick={() => setRole(r)}
-                className={`flex-1 py-2.5 text-sm font-semibold capitalize transition-colors ${
-                  role === r ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-blue-50"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-8">
+          <h2 className="text-xl font-bold text-blue-900 mb-6 text-center">Sign In</h2>
+          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm font-medium">{error}</div>}
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                required
-                placeholder="you@example.com"
-                className="input"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">Email Address</label>
+              <input className="input" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                className="input"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-              />
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">Password</label>
+              <div className="relative">
+                <input className="input pr-10" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  )}
+                </button>
+              </div>
             </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
-                <input type="checkbox" className="rounded" /> Remember me
-              </label>
-              <a href="#" className="text-blue-600 hover:underline font-medium">Forgot password?</a>
-            </div>
-
-            <button type="submit" className="w-full btn-primary py-3 text-base font-bold rounded-xl">
-              Sign In as {role.charAt(0).toUpperCase() + role.slice(1)}
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3 disabled:opacity-50">
+              {loading ? "Signing in..." : "Sign In"}
             </button>
-          </form>
-
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-blue-600 font-semibold hover:underline">
-              Sign Up
-            </Link>
-          </p>
-        </div>
-
-        <p className="text-center text-blue-400 text-xs mt-6">© 2025 SAMS · Student Attendance Management System</p>
+          </div>
+        
+        </form>
       </div>
-    </main>
+    </div>
   );
 }

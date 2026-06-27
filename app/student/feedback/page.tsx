@@ -1,78 +1,104 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
+import { api } from "../../lib/api";
 
-const courses = ["CS301 – Data Structures", "CS201 – Database Management", "CS401 – Software Engineering", "CS101 – Introduction to Programming"];
+interface FeedbackItem {
+  id: string;
+  course: { code: string; name: string };
+  category: string;
+  message: string;
+  status: string;
+  createdAt: string;
+}
+
+interface Course {
+  id: string;
+  code: string;
+  name: string;
+}
+
 const categories = ["Incorrect Attendance Marked", "Technical Issue", "Medical/Emergency Excuse", "General Feedback", "Other"];
 
-const previousFeedback = [
-  { id: 1, course: "CS201", category: "Incorrect Attendance Marked", message: "I was present on Jan 10 but was marked absent.", date: "Jan 11, 2025", status: "Under Review" },
-  { id: 2, course: "CS301", category: "Medical/Emergency Excuse", message: "I missed the Jan 8 class due to a hospital visit.", date: "Jan 9, 2025", status: "Resolved" },
-];
-
 export default function FeedbackPage() {
-  const [form, setForm] = useState({ course: courses[0], category: categories[0], message: "" });
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
+  const [form, setForm] = useState({ courseId: "", category: categories[0], message: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [feedbacks, setFeedbacks] = useState(previousFeedback);
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    (async () => {
+      try {
+        const meRes = await api.get<{ facultyId?: string }>("/api/auth/me");
+        const facultyId = meRes.data?.facultyId;
+        const cRes = await api.get<Course[]>(`/api/courses${facultyId ? `?facultyId=${facultyId}` : ""}`);
+        const coursesData = cRes.data || [];
+        setCourses(coursesData);
+        if (coursesData.length > 0) setForm((prev) => ({ ...prev, courseId: coursesData[0].id }));
+      } catch {
+        const cRes = await api.get<Course[]>("/api/courses");
+        const coursesData = cRes.data || [];
+        setCourses(coursesData);
+        if (coursesData.length > 0) setForm((prev) => ({ ...prev, courseId: coursesData[0].id }));
+      }
+      const fRes = await api.get<FeedbackItem[]>("/api/feedback");
+      setFeedbacks(fRes.data || []);
+      setLoading(false);
+    })();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.message.trim()) return;
-    setFeedbacks([{ id: Date.now(), course: form.course.split(" –")[0], category: form.category, message: form.message, date: "Today", status: "Submitted" }, ...feedbacks]);
+    if (!form.message.trim() || !form.courseId) return;
+    const res = await api.post<FeedbackItem>("/api/feedback", form);
+    setFeedbacks([res.data, ...feedbacks]);
     setForm({ ...form, message: "" });
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
   };
+
+  if (loading) return <div className="flex flex-col h-full"><Header title="Feedback" /><main className="flex-1 p-8"><p>Loading...</p></main></div>;
 
   return (
     <div className="flex flex-col h-full">
       <Header title="Feedback & Comments" subtitle="Submit queries or concerns about your attendance" />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Submit Form */}
           <div className="card">
             <h2 className="text-base font-bold text-blue-900 mb-5">Submit New Feedback</h2>
             {submitted && (
-              <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 mb-4 text-sm font-medium">
-                ✅ Your feedback has been submitted!
-              </div>
+              <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 mb-4 text-sm font-medium">✅ Your feedback has been submitted!</div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Course</label>
-                <select className="input" value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })}>
-                  {courses.map(c => <option key={c}>{c}</option>)}
+                <select className="input" value={form.courseId} onChange={(e) => setForm({ ...form, courseId: e.target.value })}>
+                  {courses.map((c) => <option key={c.id} value={c.id}>{c.code} – {c.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Category</label>
                 <select className="input" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  {categories.map(c => <option key={c}>{c}</option>)}
+                  {categories.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Message</label>
-                <textarea
-                  className="input min-h-32 resize-none"
-                  placeholder="Describe your concern or feedback in detail..."
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                />
+                <textarea className="input min-h-32 resize-none" placeholder="Describe your concern in detail..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
               </div>
               <button type="submit" className="btn-primary w-full">Submit Feedback</button>
             </form>
           </div>
-
-          {/* Previous Feedbacks */}
           <div className="card">
             <h2 className="text-base font-bold text-blue-900 mb-5">My Previous Submissions</h2>
             <div className="space-y-4">
-              {feedbacks.map(f => (
+              {feedbacks.map((f) => (
                 <div key={f.id} className="p-4 border border-gray-100 rounded-xl hover:border-blue-200 transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded">{f.course}</span>
-                      <span className="text-xs text-gray-500">{f.date}</span>
+                      <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded">{f.course?.code || "—"}</span>
+                      <span className="text-xs text-gray-500">{new Date(f.createdAt).toLocaleDateString()}</span>
                     </div>
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                       f.status === "Resolved" ? "bg-green-100 text-green-700" :
@@ -83,9 +109,7 @@ export default function FeedbackPage() {
                   <p className="text-sm text-gray-600 leading-relaxed">{f.message}</p>
                 </div>
               ))}
-              {feedbacks.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-8">No feedback submitted yet</p>
-              )}
+              {feedbacks.length === 0 && <p className="text-sm text-gray-400 text-center py-8">No feedback submitted yet</p>}
             </div>
           </div>
         </div>
