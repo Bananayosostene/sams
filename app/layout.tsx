@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SAMS - Student Attendance Management System",
+  title: "SAMS",
   description: "A professional student attendance management platform",
 };
 
