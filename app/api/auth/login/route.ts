@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
       },
       accessToken,
     });
-  } catch {
-    return errorResponse("Internal server error", 500);
+  } catch (error) {
+    console.error("Login error:", error);
+    return errorResponse(error instanceof Error ? error.message : "Internal server error", 500);
   }
 }
