@@ -1,5 +1,6 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
+import { Bell } from "./icons";
 
 interface HeaderProps {
   title: string;
@@ -31,7 +32,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
         </div>
         <div className="flex items-center gap-3">
           <button className="relative p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-            <span className="text-xl">🔔</span>
+            <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
           <div className="text-sm text-gray-500">

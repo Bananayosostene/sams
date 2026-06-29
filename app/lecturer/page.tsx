@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Link from "next/link";
 import { getAuthUser } from "../lib/auth";
 import { prisma } from "../lib/prisma";
+import { BookOpen, GraduationCap, ClipboardList, BarChart2, CheckCircle } from "../components/icons";
 
 export default async function LecturerDashboard() {
   const user = await getAuthUser();
@@ -44,10 +45,10 @@ export default async function LecturerDashboard() {
     : 0;
 
   const stats = [
-    { label: "My Courses", value: String(courses.length), icon: "📚", color: "bg-blue-600" },
-    { label: "Total Students", value: String(totalStudents), icon: "🎓", color: "bg-indigo-600" },
-    { label: "Sessions This Month", value: String(sessionsThisMonth), icon: "📋", color: "bg-blue-500" },
-    { label: "Avg. Attendance", value: `${avgAttendance}%`, icon: "📊", color: "bg-blue-700" },
+    { label: "My Courses", value: String(courses.length), icon: <BookOpen className="w-6 h-6 text-white" />, color: "bg-blue-600" },
+    { label: "Total Students", value: String(totalStudents), icon: <GraduationCap className="w-6 h-6 text-white" />, color: "bg-indigo-600" },
+    { label: "Sessions This Month", value: String(sessionsThisMonth), icon: <ClipboardList className="w-6 h-6 text-white" />, color: "bg-blue-500" },
+    { label: "Avg. Attendance", value: `${avgAttendance}%`, icon: <BarChart2 className="w-6 h-6 text-white" />, color: "bg-blue-700" },
   ];
 
   return (
@@ -57,7 +58,7 @@ export default async function LecturerDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {stats.map((s) => (
             <div key={s.label} className="stat-card flex items-center gap-4">
-              <div className={`w-12 h-12 ${s.color} rounded-xl flex items-center justify-center text-2xl flex-shrink-0`}>{s.icon}</div>
+              <div className={`w-12 h-12 ${s.color} rounded-xl flex items-center justify-center flex-shrink-0`}>{s.icon}</div>
               <div>
                 <p className="text-2xl font-black text-blue-900">{s.value}</p>
                 <p className="text-xs font-semibold text-gray-600">{s.label}</p>
@@ -98,9 +99,15 @@ export default async function LecturerDashboard() {
           <div className="card">
             <h2 className="text-base font-bold text-blue-900 mb-4">Quick Actions</h2>
             <div className="space-y-2">
-              <Link href="/lecturer/attendance" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">✅ Record Attendance</Link>
-              <Link href="/lecturer/students" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">🎓 View Students</Link>
-              <Link href="/lecturer/history" className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">📋 Attendance History</Link>
+              <Link href="/lecturer/attendance" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">
+                <CheckCircle className="w-5 h-5" /> Record Attendance
+              </Link>
+              <Link href="/lecturer/students" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">
+                <GraduationCap className="w-5 h-5" /> View Students
+              </Link>
+              <Link href="/lecturer/history" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800">
+                <ClipboardList className="w-5 h-5" /> Attendance History
+              </Link>
             </div>
           </div>
         </div>
