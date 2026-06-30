@@ -10,6 +10,7 @@ interface Lecturer {
   facultyId: string;
   assignedCourses: string[];
   faculty: { id: string; name: string; code: string } | null;
+  status: string;
 }
 
 interface Course {
@@ -23,9 +24,10 @@ export default function LecturersPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [faculties, setFaculties] = useState<{ id: string; code: string }[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "", facultyId: "", assignedCourses: [] as string[] });
+  const [form, setForm] = useState({ name: "", email: "", facultyId: "", assignedCourses: [] as string[] });
   const [editing, setEditing] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -50,20 +52,19 @@ export default function LecturersPage() {
   const handleAdd = async () => {
     if (!form.name || !form.email) return;
     if (editing) {
-      const { password: _pw, ...rest } = form;
-      const res = await api.put<Lecturer>(`/api/lecturers/${editing}`, rest);
+      const res = await api.put<Lecturer>(`/api/lecturers/${editing}`, form);
       setLecturers(lecturers.map((l) => (l.id === editing ? res.data : l)));
     } else {
       const res = await api.post<Lecturer>("/api/lecturers", form);
       setLecturers([res.data, ...lecturers]);
     }
-    setForm({ name: "", email: "", password: "", facultyId: "", assignedCourses: [] });
+    setForm({ name: "", email: "", facultyId: "", assignedCourses: [] });
     setEditing(null);
     setShowModal(false);
   };
 
   const handleEdit = (l: Lecturer) => {
-    setForm({ name: l.name, email: l.email, password: "", facultyId: l.facultyId || "", assignedCourses: l.assignedCourses });
+    setForm({ name: l.name, email: l.email, facultyId: l.facultyId || "", assignedCourses: l.assignedCourses });
     setEditing(l.id);
     setShowModal(true);
   };
@@ -71,6 +72,19 @@ export default function LecturersPage() {
   const handleDelete = async (id: string) => {
     await api.delete(`/api/lecturers/${id}`);
     setLecturers(lecturers.filter((l) => l.id !== id));
+  };
+
+  const handleResendInvite = async (id: string) => {
+    setSending(id);
+    try {
+      const lecturer = lecturers.find((l) => l.id === id);
+      await api.post("/api/auth/invite", { email: lecturer?.email });
+      alert("Invitation resent successfully");
+    } catch {
+      alert("Failed to resend invitation");
+    } finally {
+      setSending(null);
+    }
   };
 
   if (loading) return <div className="flex flex-col h-full"><Header title="Lecturers" /><main className="flex-1 p-8"><p>Loading...</p></main></div>;
@@ -82,7 +96,7 @@ export default function LecturersPage() {
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-gray-500">{lecturers.length} lecturers registered</p>
-            <button onClick={() => { setForm({ name: "", email: "", password: "", facultyId: "", assignedCourses: [] }); setEditing(null); setShowModal(true); }} className="btn-primary">+ Add Lecturer</button>
+            <button onClick={() => { setForm({ name: "", email: "", facultyId: "", assignedCourses: [] }); setEditing(null); setShowModal(true); }} className="btn-primary">+ Add Lecturer</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -92,6 +106,7 @@ export default function LecturersPage() {
                   <th className="px-4 py-3 text-left">Email</th>
                   <th className="px-4 py-3 text-left">Faculty</th>
                   <th className="px-4 py-3 text-left">Assigned Courses</th>
+                  <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left rounded-r-lg">Actions</th>
                 </tr>
               </thead>
@@ -116,8 +131,21 @@ export default function LecturersPage() {
                         })}
                       </div>
                     </td>
+                    <td className="px-4 py-3.5">
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                        l.status === "active" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {l.status === "active" ? "Active" : "Pending"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3.5 flex gap-2">
                       <button onClick={() => handleEdit(l)} className="btn-secondary text-xs py-1">Edit</button>
+                      {l.status === "pending" && (
+                        <button onClick={() => handleResendInvite(l.id)} disabled={sending === l.id}
+                          className="text-xs px-3 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors disabled:opacity-50">
+                          {sending === l.id ? "..." : "Resend"}
+                        </button>
+                      )}
                       <button onClick={() => handleDelete(l.id)} className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Delete</button>
                     </td>
                   </tr>
@@ -140,12 +168,6 @@ export default function LecturersPage() {
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Email Address</label>
                 <input className="input" type="email" placeholder="lecturer@uni.edu" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-              {!editing && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1.5">Password</label>
-                  <input className="input" type="password" placeholder="Set password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                </div>
-              )}
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Faculty</label>
                 <select className="input" value={form.facultyId} onChange={(e) => setForm({ ...form, facultyId: e.target.value })}>

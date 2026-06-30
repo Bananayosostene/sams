@@ -18,6 +18,7 @@ export async function POST() {
         name: "System Admin",
         role: "admin",
         assignedCourses: [],
+        status: "active",
       },
     });
 
@@ -73,6 +74,7 @@ export async function POST() {
           role: "lecturer",
           facultyId: faculties[0].id,
           assignedCourses: [courses[0].id, courses[1].id],
+          status: "active",
         },
       }),
       prisma.user.create({
@@ -83,6 +85,7 @@ export async function POST() {
           role: "lecturer",
           facultyId: faculties[1].id,
           assignedCourses: [courses[4].id],
+          status: "active",
         },
       }),
       prisma.user.create({
@@ -93,6 +96,7 @@ export async function POST() {
           role: "lecturer",
           facultyId: faculties[2].id,
           assignedCourses: [courses[5].id],
+          status: "active",
         },
       }),
     ]);
@@ -109,31 +113,31 @@ export async function POST() {
     const studentPassword = await bcrypt.hash("student123", 12);
     const students = await Promise.all([
       prisma.user.create({
-        data: { name: "Alice Johnson", email: "alice@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024001", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Alice Johnson", email: "alice@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024001", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Bob Williams", email: "bob@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024002", facultyId: faculties[1].id, assignedCourses: [] },
+        data: { name: "Bob Williams", email: "bob@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024002", facultyId: faculties[1].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Carol Smith", email: "carol@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024003", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Carol Smith", email: "carol@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024003", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "David Brown", email: "david@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024004", facultyId: faculties[2].id, assignedCourses: [] },
+        data: { name: "David Brown", email: "david@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024004", facultyId: faculties[2].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Eva Martinez", email: "eva@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024005", facultyId: faculties[3].id, assignedCourses: [] },
+        data: { name: "Eva Martinez", email: "eva@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024005", facultyId: faculties[3].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Frank Wilson", email: "frank@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024006", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Frank Wilson", email: "frank@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024006", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Grace Lee", email: "grace@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024008", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Grace Lee", email: "grace@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024008", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Henry Davis", email: "henry@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024009", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Henry Davis", email: "henry@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024009", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
       prisma.user.create({
-        data: { name: "Iris Brown", email: "iris@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024010", facultyId: faculties[0].id, assignedCourses: [] },
+        data: { name: "Iris Brown", email: "iris@student.edu", password: studentPassword, role: "student", registrationNumber: "STU2024010", facultyId: faculties[0].id, assignedCourses: [], status: "active" },
       }),
     ]);
 

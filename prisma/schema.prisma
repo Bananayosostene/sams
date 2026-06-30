@@ -10,13 +10,16 @@ datasource db {
 model User {
   id                 String        @id @default(auto()) @map("_id") @db.ObjectId
   email              String        @unique
-  password           String
+  password           String?
   name               String
   role               String
   registrationNumber String?
   facultyId          String?       @db.ObjectId
   assignedCourses    String[]
   refreshToken       String?
+  status             String        @default("pending")
+  invitationToken    String?       @unique
+  invitationExpiry   DateTime?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 

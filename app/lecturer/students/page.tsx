@@ -1,6 +1,7 @@
+"use client";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import { getAuthUser } from "../../lib/auth";
-import { prisma } from "../../lib/prisma";
+import { api } from "../../lib/api";
 
 interface StudentData {
   id: string;
@@ -10,64 +11,57 @@ interface StudentData {
   attendancePct: number;
 }
 
-async function getStudentsData(): Promise<StudentData[]> {
-  const user = await getAuthUser();
-  if (!user || user.role !== "lecturer") return [];
+export default function LecturerStudentsPage() {
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", regNo: "" });
+  const [adding, setAdding] = useState(false);
 
-  const courses = await prisma.course.findMany({
-    where: { lecturerIds: { has: user.id } },
-    select: { id: true, facultyId: true },
-  });
+  const loadStudents = async () => {
+    try {
+      const res = await api.get<StudentData[]>("/api/lecturer/students");
+      setStudents(res.data || []);
+    } catch {
+      setStudents([]);
+    }
+    setLoading(false);
+  };
 
-  if (courses.length === 0) return [];
+  useEffect(() => {
+    loadStudents();
+  }, []);
 
-  const courseIds = courses.map((c) => c.id);
-  const facultyIds = [...new Set(courses.map((c) => c.facultyId).filter(Boolean))];
+  const handleAdd = async () => {
+    if (!form.name || !form.email || !form.regNo) return;
+    setAdding(true);
+    try {
+      await api.post("/api/students", {
+        name: form.name,
+        email: form.email,
+        registrationNumber: form.regNo,
+      });
+      setForm({ name: "", email: "", regNo: "" });
+      setShowModal(false);
+      loadStudents();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add student");
+    } finally {
+      setAdding(false);
+    }
+  };
 
-  const students = await prisma.user.findMany({
-    where: {
-      role: "student",
-      ...(facultyIds.length > 0 ? { facultyId: { in: facultyIds } } : {}),
-    },
-    select: { id: true, name: true, email: true, registrationNumber: true },
-  });
-
-  const attendanceRecords = await prisma.attendance.findMany({
-    where: {
-      courseId: { in: courseIds },
-      studentId: { in: students.map((s) => s.id) },
-    },
-    select: { studentId: true, status: true },
-  });
-
-  const studentAttendance: Record<string, { present: number; total: number }> = {};
-  for (const r of attendanceRecords) {
-    if (!studentAttendance[r.studentId]) studentAttendance[r.studentId] = { present: 0, total: 0 };
-    studentAttendance[r.studentId].total++;
-    if (r.status === "present") studentAttendance[r.studentId].present++;
-  }
-
-  return students.map((s) => {
-    const sa = studentAttendance[s.id];
-    const pct = sa && sa.total > 0 ? Math.round((sa.present / sa.total) * 100) : 0;
-    return {
-      id: s.id,
-      regNo: s.registrationNumber,
-      name: s.name,
-      email: s.email,
-      attendancePct: pct,
-    };
-  }).sort((a, b) => b.attendancePct - a.attendancePct);
-}
-
-export default async function LecturerStudentsPage() {
-  const students = await getStudentsData();
+  if (loading) return <div className="flex flex-col h-full"><Header title="Students" /><main className="flex-1 p-8"><p>Loading...</p></main></div>;
 
   return (
     <div className="flex flex-col h-full">
       <Header title="Students" subtitle="Students enrolled in your courses" />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="card">
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-gray-500">{students.length} students enrolled</p>
+            <button onClick={() => setShowModal(true)} className="btn-primary">+ Add Student</button>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -120,6 +114,34 @@ export default async function LecturerStudentsPage() {
           </div>
         </div>
       </main>
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <h3 className="text-lg font-bold text-blue-900 mb-5">Add New Student</h3>
+            <p className="text-sm text-gray-500 mb-4">An invitation email will be sent for account setup.</p>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">Full Name</label>
+                <input className="input" placeholder="e.g. Jane Doe" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
+                <input className="input" type="email" placeholder="student@student.edu" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">Registration Number</label>
+                <input className="input" placeholder="e.g. STU2025001" value={form.regNo} onChange={(e) => setForm({ ...form, regNo: e.target.value })} />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button onClick={handleAdd} disabled={adding} className="btn-primary flex-1 disabled:opacity-50">
+                {adding ? "Adding..." : "Add Student"}
+              </button>
+              <button onClick={() => setShowModal(false)} className="btn-secondary flex-1">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
