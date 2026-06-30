@@ -7,16 +7,26 @@ import { successResponse, errorResponse } from "@/app/lib/api-response";
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
-    if (!email || !password) {
+    const trimmedEmail = email?.trim();
+    const trimmedPassword = password?.trim();
+    if (!trimmedEmail || !trimmedPassword) {
       return errorResponse("Email and password are required");
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email: trimmedEmail } });
     if (!user) {
       return errorResponse("Invalid email or password", 401);
     }
 
-    const valid = await bcrypt.compare(password, user.password);
+    if (user.status === "pending") {
+      return errorResponse("Please complete your account setup first. Check your email for the invitation link.", 403);
+    }
+
+    if (!user.password) {
+      return errorResponse("Account setup incomplete. Please contact your admin.", 403);
+    }
+
+    const valid = await bcrypt.compare(trimmedPassword, user.password);
     if (!valid) {
       return errorResponse("Invalid email or password", 401);
     }
@@ -44,8 +54,7 @@ export async function POST(req: NextRequest) {
       },
       accessToken,
     });
-  } catch (error) {
-    console.error("Login error:", error);
-    return errorResponse(error instanceof Error ? error.message : "Internal server error", 500);
+  } catch {
+    return errorResponse("Internal server error", 500);
   }
 }

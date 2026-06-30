@@ -10,6 +10,7 @@ interface Student {
   email: string;
   facultyId: string | null;
   faculty: { id: string; name: string; code: string } | null;
+  status: string;
 }
 
 interface Faculty {
@@ -23,9 +24,10 @@ export default function StudentsPage() {
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [form, setForm] = useState({ regNo: "", name: "", email: "", password: "", facultyId: "" });
+  const [form, setForm] = useState({ regNo: "", name: "", email: "", facultyId: "" });
   const [editing, setEditing] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -46,22 +48,22 @@ export default function StudentsPage() {
   const handleAdd = async () => {
     if (!form.name || !form.email || !form.regNo) return;
     if (editing) {
-      const { password: _pw, regNo, ...rest } = form;
+      const { regNo, ...rest } = form;
       const res = await api.put<Student>(`/api/students/${editing}`, { ...rest, registrationNumber: regNo });
       setStudents(students.map((s) => (s.id === editing ? res.data : s)));
     } else {
       const res = await api.post<Student>("/api/students", {
-        name: form.name, email: form.email, password: form.password, registrationNumber: form.regNo, facultyId: form.facultyId || undefined,
+        name: form.name, email: form.email, registrationNumber: form.regNo, facultyId: form.facultyId || undefined,
       });
       setStudents([res.data, ...students]);
     }
-    setForm({ regNo: "", name: "", email: "", password: "", facultyId: "" });
+    setForm({ regNo: "", name: "", email: "", facultyId: "" });
     setEditing(null);
     setShowModal(false);
   };
 
   const handleEdit = (s: Student) => {
-    setForm({ regNo: s.registrationNumber || "", name: s.name, email: s.email, password: "", facultyId: s.facultyId || "" });
+    setForm({ regNo: s.registrationNumber || "", name: s.name, email: s.email, facultyId: s.facultyId || "" });
     setEditing(s.id);
     setShowModal(true);
   };
@@ -69,6 +71,19 @@ export default function StudentsPage() {
   const handleDelete = async (id: string) => {
     await api.delete(`/api/students/${id}`);
     setStudents(students.filter((s) => s.id !== id));
+  };
+
+  const handleResendInvite = async (id: string) => {
+    setSending(id);
+    try {
+      const student = students.find((s) => s.id === id);
+      await api.post("/api/auth/invite", { email: student?.email });
+      alert("Invitation resent successfully");
+    } catch {
+      alert("Failed to resend invitation");
+    } finally {
+      setSending(null);
+    }
   };
 
   if (loading) return <div className="flex flex-col h-full"><Header title="Students" /><main className="flex-1 p-8"><p>Loading...</p></main></div>;
@@ -80,7 +95,7 @@ export default function StudentsPage() {
         <div className="card">
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-6">
             <input className="input max-w-xs" placeholder="Search students..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            <button onClick={() => { setForm({ regNo: "", name: "", email: "", password: "", facultyId: "" }); setEditing(null); setShowModal(true); }} className="btn-primary whitespace-nowrap">+ Add Student</button>
+            <button onClick={() => { setForm({ regNo: "", name: "", email: "", facultyId: "" }); setEditing(null); setShowModal(true); }} className="btn-primary whitespace-nowrap">+ Add Student</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -90,6 +105,7 @@ export default function StudentsPage() {
                   <th className="px-4 py-3 text-left">Reg. Number</th>
                   <th className="px-4 py-3 text-left">Faculty</th>
                   <th className="px-4 py-3 text-left">Email</th>
+                  <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left rounded-r-lg">Actions</th>
                 </tr>
               </thead>
@@ -109,8 +125,21 @@ export default function StudentsPage() {
                     </td>
                     <td className="px-4 py-3.5 text-sm text-gray-600">{s.faculty?.code || "—"}</td>
                     <td className="px-4 py-3.5 text-sm text-gray-600">{s.email}</td>
+                    <td className="px-4 py-3.5">
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                        s.status === "active" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {s.status === "active" ? "Active" : "Pending"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3.5 flex gap-2">
                       <button onClick={() => handleEdit(s)} className="btn-secondary text-xs py-1">Edit</button>
+                      {s.status === "pending" && (
+                        <button onClick={() => handleResendInvite(s.id)} disabled={sending === s.id}
+                          className="text-xs px-3 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors disabled:opacity-50">
+                          {sending === s.id ? "..." : "Resend"}
+                        </button>
+                      )}
                       <button onClick={() => handleDelete(s.id)} className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Delete</button>
                     </td>
                   </tr>
@@ -137,12 +166,6 @@ export default function StudentsPage() {
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
                 <input className="input" type="email" placeholder="student@student.edu" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-              {!editing && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1.5">Password</label>
-                  <input className="input" type="password" placeholder="Set password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                </div>
-              )}
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Faculty</label>
                 <select className="input" value={form.facultyId} onChange={(e) => setForm({ ...form, facultyId: e.target.value })}>
