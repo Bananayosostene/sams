@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
 import { successResponse, errorResponse, unauthorizedResponse } from "@/app/lib/api-response";
+import { createNotification } from "@/app/lib/notification";
 
 export async function GET(req: NextRequest) {
   try {
@@ -58,6 +59,24 @@ export async function POST(req: NextRequest) {
         course: { select: { id: true, name: true, code: true } },
       },
     });
+
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: { lecturerIds: true, name: true },
+    });
+
+    if (course) {
+      for (const lecturerId of course.lecturerIds) {
+        createNotification({
+          userId: lecturerId,
+          title: "New Feedback Submitted",
+          message: `${user.name} submitted feedback for ${course.name}`,
+          type: "info",
+          link: "/lecturer/feedback",
+        }).catch(() => {});
+      }
+    }
+
     return successResponse(feedback, "Feedback submitted successfully", 201);
   } catch {
     return errorResponse("Failed to submit feedback", 500);

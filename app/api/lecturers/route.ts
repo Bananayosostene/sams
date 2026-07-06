@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
-import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
 import { successResponse, errorResponse, unauthorizedResponse, forbiddenResponse } from "@/app/lib/api-response";
+import { sendInvitationEmail } from "@/app/lib/mail";
+import { createNotificationForRole } from "@/app/lib/notification";
 
 export async function GET() {
   try {
@@ -11,6 +12,7 @@ export async function GET() {
       select: {
         id: true, name: true, email: true, facultyId: true, assignedCourses: true,
         faculty: { select: { id: true, name: true, code: true } },
+        status: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
@@ -27,22 +29,30 @@ export async function POST(req: NextRequest) {
     if (!user) return unauthorizedResponse();
     if (user.role !== "admin") return forbiddenResponse();
 
-    const { name, email, password, facultyId, assignedCourses } = await req.json();
-    if (!name || !email || !password) return errorResponse("Name, email, and password are required");
+    const { name, email, facultyId, assignedCourses } = await req.json();
+    if (!name || !email) return errorResponse("Name and email are required");
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return errorResponse("Email already registered", 409);
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const crypto = await import("node:crypto");
+    const invitationToken = crypto.randomBytes(32).toString("hex");
+    const invitationExpiry = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
     const lecturer = await prisma.user.create({
       data: {
-        name, email, password: hashedPassword,
+        name, email,
         role: "lecturer",
         facultyId: facultyId || undefined,
         assignedCourses: assignedCourses || [],
+        status: "pending",
+        invitationToken,
+        invitationExpiry,
       },
-      select: { id: true, name: true, email: true, facultyId: true, assignedCourses: true },
+      select: {
+        id: true, name: true, email: true, facultyId: true,
+        assignedCourses: true, status: true, createdAt: true,
+      },
     });
 
     if (assignedCourses?.length > 0) {
@@ -54,7 +64,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return successResponse(lecturer, "Lecturer created successfully", 201);
+    try {
+      await sendInvitationEmail(email, name, "lecturer", invitationToken);
+    } catch {
+      console.error("Failed to send invitation email to", email);
+    }
+
+    createNotificationForRole("admin", {
+      title: "New Lecturer Added",
+      message: `${name} has been added as a lecturer.`,
+      type: "info",
+      link: "/admin/lecturers",
+    }).catch(() => {});
+
+    return successResponse(lecturer, "Lecturer created successfully. Invitation sent.", 201);
   } catch {
     return errorResponse("Failed to create lecturer", 500);
   }

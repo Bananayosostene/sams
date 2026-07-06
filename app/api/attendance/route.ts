@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
 import { successResponse, errorResponse, unauthorizedResponse, forbiddenResponse } from "@/app/lib/api-response";
+import { createNotification } from "@/app/lib/notification";
 
 export async function GET(req: NextRequest) {
   try {
@@ -80,6 +81,23 @@ export async function POST(req: NextRequest) {
         });
         created.push(att);
       }
+    }
+
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: { name: true, code: true },
+    });
+
+    for (const record of records) {
+      const { studentId, status } = record;
+      if (!studentId || !status) continue;
+      createNotification({
+        userId: studentId,
+        title: "Attendance Recorded",
+        message: `You were marked as "${status}" for ${course?.name || courseId} on ${date}`,
+        type: status === "Absent" ? "warning" : "info",
+        link: "/student/attendance",
+      }).catch(() => {});
     }
 
     return successResponse(created, "Attendance saved successfully", 201);

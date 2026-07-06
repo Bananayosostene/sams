@@ -79,19 +79,9 @@ export default function SignupPage() {
                 className="input"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-              />
+                />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Confirm Password</label>
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                className="input"
-                value={form.confirm}
-                onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-              />
-            </div>
+                {/* no confirm password field needed */}
 
             <button type="submit" className="w-full btn-primary py-3 text-base font-bold rounded-xl">
               Sign Up as {role.charAt(0).toUpperCase() + role.slice(1)}

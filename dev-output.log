@@ -1,0 +1,349 @@
+
+> sams-app@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.66:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 3.5s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 877ms (170 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 5.6s (569 modules)
+ GET /login 200 in 6999ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 657ms (353 modules)
+ GET /favicon.ico 200 in 1033ms
+ ✓ Compiled in 1684ms (233 modules)
+ ✓ Compiled in 481ms (233 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.4s (560 modules)
+ GET /login 404 in 3615ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.6s (907 modules)
+ GET /login 500 in 4581ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ GET /login 500 in 328ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ GET /login 500 in 309ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ GET /login 500 in 304ms
+ ✓ Compiled in 1526ms (385 modules)
+ ✓ Compiled in 297ms (385 modules)
+ ✓ Compiled in 279ms (385 modules)
+   Reload env: .env
+ ✓ Compiled in 972ms (976 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+   Reload env: .env
+ ○ Compiling /_error ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /login 500 in 885ms
+ ✓ Compiled /_error in 1920ms (1072 modules)
+Could not find files for /_error in .next/build-manifest.json
+Could not find files for /_error in .next/build-manifest.json
+   Reload env: .env
+ GET /login 200 in 1872ms
+ ✓ Compiled in 2.2s (1072 modules)
+ ○ Compiling /favicon.ico ...
+   Reload env: .env
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /favicon.ico in 2.3s (1089 modules)
+ GET /favicon.ico 200 in 2672ms
+ GET /login 200 in 598ms
+ GET /login 200 in 702ms
+   Reload env: .env
+ ✓ Compiled in 633ms (1089 modules)
+   Reload env: .env
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 962ms (976 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ○ Compiling /_error ...
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /_error in 1811ms (902 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+ GET /login 500 in 19020ms
+ GET /login 500 in 18143ms
+ ✓ Compiled /favicon.ico in 380ms (547 modules)
+ GET /favicon.ico 200 in 1073ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\cache\webpack\client-development-fallback\0.pack.gz'
+ ○ Compiling /complete-registration/[token] ...
+ ✓ Compiled /complete-registration/[token] in 1142ms (813 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /login 500 in 306ms
+ ✓ Compiled /_error in 464ms (909 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ GET /login 500 in 870ms
+ GET /login 500 in 99ms
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 200 in 3503ms
+ ✓ Compiled /favicon.ico in 320ms (552 modules)
+ GET /favicon.ico 200 in 824ms
+ GET /favicon.ico 200 in 76ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 839ms (931 modules)
+ GET /firebase-messaging-sw.js 404 in 1299ms
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 200 in 244ms
+ GET /favicon.ico 200 in 61ms
+ ○ Compiling /api/auth/complete-registration ...
+ ✓ Compiled /api/auth/complete-registration in 1269ms (941 modules)
+ POST /api/auth/complete-registration 200 in 3946ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ GET /login 500 in 361ms
+ GET /login 500 in 114ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\app\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\app\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\B Sostene\\Desktop\\Dev_clients\\SAM-Project\\.next\\server\\pages\\_document.js'
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ GET /login 500 in 351ms
+ GET /login 500 in 111ms
+ GET /login 404 in 551ms
+ GET /favicon.ico 200 in 59ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 115ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 65ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 66ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 65ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 91ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 79ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 68ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 97ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 70ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 68ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 83ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 74ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 78ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 71ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 68ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 79ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 78ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 63ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 102ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 114ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 120ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 74ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 147ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 115ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 95ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 89ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 93ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 109ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 107ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 115ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 104ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 84ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 82ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 127ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 107ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 82ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 76ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 81ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 56ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 55ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 61ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 64ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 69ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 75ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 61ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 68ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 67ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 373ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 280ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 148ms
+ GET /favicon.ico 404 in 42ms
+ ✓ Compiled in 1985ms (828 modules)
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 200 in 1151ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 233ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 540ms
+ ✓ Compiled in 841ms (828 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 709ms
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 200 in 729ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 562ms
+ ✓ Compiled in 472ms (388 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 771ms (819 modules)
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 404 in 1923ms
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 404 in 2028ms
+ GET /complete-registration/17ac16bfedde80afd7440119f3f78ad94c5f7e6761e19a5cb91f8561ab521c7c 200 in 715ms
+ GET /complete-registration/4fce5137c3072027cc578596ceaf192fed1692c68d609839804f25aefd400be2 200 in 724ms
+ GET /firebase-messaging-sw.js 404 in 227ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\Users\B Sostene\Desktop\Dev_clients\SAM-Project\.next\cache\webpack\client-development-fallback\0.pack.gz'
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1027ms (915 modules)
+ GET /complete-registration/dc454c17ec4d754dea34660d13bac058a64e6950a3c7a88b7874bc98f5414a5d 404 in 1845ms
