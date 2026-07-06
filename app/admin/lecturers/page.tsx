@@ -171,6 +171,10 @@ export default function LecturersPage() {
             <h3 className="text-lg font-bold text-blue-900 mb-5">{editing ? "Edit Lecturer" : "Add New Lecturer"}</h3>
             <div className="space-y-4">
               <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">Full Name</label>
+                <input className="input" type="text" placeholder="Dr. John Doe" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Email Address</label>
                 <input className="input" type="email" placeholder="lecturer@uni.edu" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
