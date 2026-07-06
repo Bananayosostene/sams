@@ -8,23 +8,9 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle }: HeaderProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const segments = pathname.split("/").filter(Boolean);
-  const isSubPage = segments.length > 1;
-  const dashboardPath = "/" + segments[0];
 
   return (
     <header className="bg-white border-b border-blue-100 px-8 py-4 sticky top-0 z-10 shadow-sm">
-      {isSubPage && (
-        <button
-          onClick={() => router.push(dashboardPath)}
-          className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors mb-2"
-        >
-          ← Back to Dashboard
-        </button>
-      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-blue-900">{title}</h1>
