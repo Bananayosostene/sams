@@ -28,6 +28,7 @@ const navItems = {
     { label: "Dashboard", href: "/student", icon: <LayoutDashboard /> },
     { label: "My Attendance", href: "/student/attendance", icon: <ClipboardList /> },
     { label: "Feedback", href: "/student/feedback", icon: <MessageSquare /> },
+    { label: "Mark Attendance", href: "/student/self", icon: <CheckCircle /> },
   ],
 };
 

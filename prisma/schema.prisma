@@ -27,6 +27,7 @@ model User {
   attendance  Attendance[]
   feedbacks   Feedback[]
   recordedBy  Attendance[] @relation("RecordedBy")
+  sessions    AttendanceSession[] @relation("SessionLecturer")
 }
 
 model Faculty {
@@ -62,13 +63,17 @@ model Course {
   facultyId   String   @db.ObjectId
   semesterId  String   @db.ObjectId
   lecturerIds String[]
+  latitude    Float?
+  longitude   Float?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  faculty    Faculty     @relation(fields: [facultyId], references: [id])
-  semester   Semester    @relation(fields: [semesterId], references: [id])
-  attendance Attendance[]
-  feedbacks  Feedback[]
+  faculty       Faculty          @relation(fields: [facultyId], references: [id])
+  semester      Semester         @relation(fields: [semesterId], references: [id])
+  attendance    Attendance[]
+  feedbacks     Feedback[]
+  sessions      AttendanceSession[]
+  classLocations ClassLocation[]
 }
 
 model Attendance {
@@ -77,6 +82,9 @@ model Attendance {
   courseId     String   @db.ObjectId
   date         String
   status       String
+  source       String   @default("lecturer")
+  latitude     Float?
+  longitude    Float?
   recordedById String   @db.ObjectId
   semesterId   String   @db.ObjectId
   createdAt    DateTime @default(now())
@@ -111,4 +119,30 @@ model Notification {
   link      String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model AttendanceSession {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  courseId   String    @db.ObjectId
+  lecturerId String    @db.ObjectId
+  date       String
+  token      String    @unique
+  status     String    @default("active")
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  course   Course @relation(fields: [courseId], references: [id])
+  lecturer User   @relation("SessionLecturer", fields: [lecturerId], references: [id])
+}
+
+model ClassLocation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  courseId  String   @db.ObjectId
+  latitude  Float
+  longitude Float
+  label     String?
+  createdAt DateTime @default(now())
+
+  course Course @relation(fields: [courseId], references: [id])
 }

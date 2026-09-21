@@ -20,6 +20,7 @@ interface AttendanceRecord {
   id: string;
   date: string;
   status: "present" | "absent" | "late";
+  source?: string;
   studentId: string;
   student: StudentInfo;
   courseId: string;
@@ -251,6 +252,7 @@ export default function AttendanceHistoryPage() {
                         <tr className="table-head">
                           <th className="px-3 py-2 text-left rounded-l-lg text-xs">Student</th>
                           <th className="px-3 py-2 text-left text-xs">Reg. No</th>
+                          <th className="px-3 py-2 text-left text-xs">Marked By</th>
                           <th className="px-3 py-2 text-right rounded-r-lg text-xs">Status</th>
                         </tr>
                       </thead>
@@ -269,6 +271,11 @@ export default function AttendanceHistoryPage() {
                                 </div>
                               </td>
                               <td className="px-3 py-2.5 text-xs text-gray-500 font-mono">{record.student.registrationNumber || "—"}</td>
+                              <td className="px-3 py-2.5 text-xs">
+                                <span className={`px-2 py-0.5 rounded-full font-medium ${record.source === "student" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-600"}`}>
+                                  {record.source === "student" ? "Self" : "Lecturer"}
+                                </span>
+                              </td>
                               <td className="px-3 py-2.5 text-right">
                                 <div className="flex gap-1.5 justify-end">
                                   {(["present", "late", "absent"] as Status[]).map((st) => (
