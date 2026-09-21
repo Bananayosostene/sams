@@ -12,7 +12,13 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<ApiRe
     headers: { "Content-Type": "application/json", ...options.headers },
     ...options,
   });
-  const json = await res.json();
+  const text = await res.text();
+  let json: ApiResponse<T>;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error(`Request failed (${res.status})`);
+  }
   if (!res.ok) throw new Error(json.message || "Request failed");
   return json;
 }

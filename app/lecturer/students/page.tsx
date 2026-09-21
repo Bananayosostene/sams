@@ -12,11 +12,18 @@ interface StudentData {
   attendancePct: number;
 }
 
+interface Faculty {
+  id: string;
+  name: string;
+  code: string;
+}
+
 export default function LecturerStudentsPage() {
   const [students, setStudents] = useState<StudentData[]>([]);
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", regNo: "" });
+  const [form, setForm] = useState({ name: "", email: "", regNo: "", facultyId: "" });
   const [adding, setAdding] = useState(false);
 
   const loadStudents = async () => {
@@ -30,6 +37,9 @@ export default function LecturerStudentsPage() {
   };
 
   useEffect(() => {
+    api.get<Faculty[]>("/api/faculties").then((res) => {
+      setFaculties(res.data || []);
+    }).catch(() => {});
     loadStudents();
   }, []);
 
@@ -41,8 +51,9 @@ export default function LecturerStudentsPage() {
         name: form.name,
         email: form.email,
         registrationNumber: form.regNo,
+        facultyId: form.facultyId || undefined,
       });
-      setForm({ name: "", email: "", regNo: "" });
+      setForm({ name: "", email: "", regNo: "", facultyId: "" });
       setShowModal(false);
       loadStudents();
     } catch (err) {
@@ -119,7 +130,7 @@ export default function LecturerStudentsPage() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-bold text-blue-900 mb-5">Add New Student</h3>
-            <p className="text-sm text-gray-500 mb-4">An invitation email will be sent for account setup.</p>
+            <p className="text-sm text-gray-500 mb-4">The student&apos;s password will be their registration number. An email with login details will be sent.</p>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Full Name</label>
@@ -132,6 +143,13 @@ export default function LecturerStudentsPage() {
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1.5">Registration Number</label>
                 <input className="input" placeholder="e.g. STU2025001" value={form.regNo} onChange={(e) => setForm({ ...form, regNo: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">Faculty</label>
+                <select className="input" value={form.facultyId} onChange={(e) => setForm({ ...form, facultyId: e.target.value })}>
+                  <option value="">Select Faculty</option>
+                  {faculties.map((f) => <option key={f.id} value={f.id}>{f.name} ({f.code})</option>)}
+                </select>
               </div>
             </div>
             <div className="flex gap-3 mt-6">

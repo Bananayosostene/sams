@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
 import { successResponse, errorResponse, unauthorizedResponse, forbiddenResponse } from "@/app/lib/api-response";
-import { sendInvitationEmail } from "@/app/lib/mail";
+import { sendStudentCredentialsEmail } from "@/app/lib/mail";
 import { createNotificationForRole } from "@/app/lib/notification";
 
 export async function GET(req: NextRequest) {
@@ -47,10 +48,14 @@ export async function POST(req: NextRequest) {
       return errorResponse("Name, email, and registration number are required");
     }
 
-    const targetFacultyId = user.role === "lecturer" ? user.facultyId : (facultyId || undefined);
+    let targetFacultyId = user.role === "lecturer" ? (facultyId || user.facultyId) : (facultyId || undefined);
 
     if (user.role === "lecturer" && !targetFacultyId) {
-      return errorResponse("You are not assigned to any faculty");
+      const course = await prisma.course.findFirst({
+        where: { lecturerIds: { has: user.id } },
+        select: { facultyId: true },
+      });
+      if (course) targetFacultyId = course.facultyId;
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -59,29 +64,17 @@ export async function POST(req: NextRequest) {
     const regDup = await prisma.user.findFirst({ where: { registrationNumber } });
     if (regDup) return errorResponse("Registration number already exists", 409);
 
-    if (user.role === "lecturer") {
-      const courses = await prisma.course.findMany({
-        where: { lecturerIds: { has: user.id }, facultyId: targetFacultyId },
-      });
-      if (courses.length === 0) {
-        return errorResponse("No courses found in your faculty to add students to");
-      }
-    }
-
-    const crypto = await import("node:crypto");
-    const invitationToken = crypto.randomBytes(32).toString("hex");
-    const invitationExpiry = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    const password = await bcrypt.hash(registrationNumber, 12);
 
     const student = await prisma.user.create({
       data: {
         name, email,
         role: "student",
         registrationNumber,
+        password,
         facultyId: targetFacultyId,
         assignedCourses: [],
-        status: "pending",
-        invitationToken,
-        invitationExpiry,
+        status: "active",
       },
       select: {
         id: true, name: true, email: true, registrationNumber: true,
@@ -90,9 +83,9 @@ export async function POST(req: NextRequest) {
     });
 
     try {
-      await sendInvitationEmail(email, name, "student", invitationToken);
+      await sendStudentCredentialsEmail(email, name, registrationNumber);
     } catch {
-      console.error("Failed to send invitation email to", email);
+      console.error("Failed to send credentials email to", email);
     }
 
     createNotificationForRole("admin", {
@@ -102,7 +95,7 @@ export async function POST(req: NextRequest) {
       link: "/admin/students",
     }).catch(() => {});
 
-    return successResponse(student, "Student created successfully. Invitation sent.", 201);
+    return successResponse(student, "Student created successfully. Login credentials sent.", 201);
   } catch {
     return errorResponse("Failed to create student", 500);
   }

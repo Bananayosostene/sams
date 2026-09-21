@@ -40,3 +40,35 @@ SAMS Team`;
     text,
   });
 }
+
+export async function sendStudentCredentialsEmail(
+  email: string,
+  name: string,
+  registrationNumber: string
+) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const loginLink = `${baseUrl}/login`;
+
+  const text = `Dear ${name},
+
+Welcome to SAMS (Student Attendance Management System). Your student account has been created successfully.
+
+You can now log in to the system using the credentials below:
+
+Email: ${email}
+Password: ${registrationNumber}
+
+Please log in at: ${loginLink}
+
+Keep your password safe. If you did not expect this email, you can ignore it.
+
+Best regards,
+SAMS Team`;
+
+  await transporter.sendMail({
+    from: `"SAMS" <${process.env.NODEMAILER_USER}>`,
+    to: email,
+    subject: "Your SAMS Student Account Has Been Created",
+    text,
+  });
+}

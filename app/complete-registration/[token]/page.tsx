@@ -8,7 +8,6 @@ export default function CompleteRegistrationPage({ params }: { params: Promise<{
   const router = useRouter();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,10 +24,6 @@ export default function CompleteRegistrationPage({ params }: { params: Promise<{
     }
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
       return;
     }
 
